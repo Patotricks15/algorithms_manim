@@ -7,27 +7,64 @@ class MergeSortScene(Scene):
         elements.arrange(RIGHT, buff=0.6)
         elements.move_to(ORIGIN)
         self.play(FadeIn(elements))
-        self.display_text(f"Unsorted array: {arr}", position=4)
-        self.wait(1)
+        self.wait(0.5)
 
         self.visualize_merge_sort(arr, elements, y_offset=0, x_offset=0, depth=0)
 
     def create_box(self, value):
+        """
+        Creates a box with given value.
+
+        Args:
+            value (str): The string to show inside the box.
+
+        Returns:
+            VGroup: A VGroup containing the box and the text.
+        """
         box = Rectangle(width=0.8, height=0.8, color=BLUE)
         text = Text(value, font_size=20).move_to(box.get_center())
         return VGroup(box, text)
 
     def create_highlight(self, group):
+        """
+        Creates a yellow highlight box around a given group of mobjects.
+
+        Args:
+            group (VGroup): The VGroup to highlight.
+
+        Returns:
+            SurroundingRectangle: A yellow highlight box.
+        """
         box = SurroundingRectangle(group, color=YELLOW, fill_opacity=0.2)
         return box
 
     def display_text(self, content, position=0):
+        """
+        Displays a text message on the scene at a specified vertical position.
+
+        Args:
+            content (str): The text content to be displayed.
+            position (int, optional): The vertical position offset from the top-left corner. Defaults to 0.
+
+        This method fades in the text at the specified position, waits briefly, and then fades it out.
+        """
+
         txt = Text(content, font_size=20).to_corner(UL).shift(DOWN * position)
         self.play(FadeIn(txt))
         self.wait(0.5)
         self.play(FadeOut(txt))
 
     def visualize_merge_sort(self, arr, elements, y_offset, x_offset, depth):
+        """
+        Visualize the merge sort algorithm.
+
+        Args:
+            arr (list): The input list to be sorted.
+            elements (VGroup): The VGroup of boxes to be animated.
+            y_offset (int): The vertical offset from the top of the screen.
+            x_offset (int): The horizontal offset from the left of the screen.
+            depth (int): The recursion depth of the merge sort algorithm.
+        """
         indent = '  ' * depth
         self.display_text(f"{indent}mergeSort called on {arr}", position=0)
 
@@ -42,7 +79,7 @@ class MergeSortScene(Scene):
         left_elems = VGroup(*elements[:mid])
         right_elems = VGroup(*elements[mid:])
 
-        # Cria retângulos para destacar os grupos
+        # Rectangles to highlight the groups
         left_highlight = self.create_highlight(left_elems)
         right_highlight = self.create_highlight(right_elems)
         self.play(FadeIn(left_highlight), FadeIn(right_highlight))
@@ -62,7 +99,7 @@ class MergeSortScene(Scene):
         self.visualize_merge_sort(left_arr, left_elems, y_offset + 1, x_offset, depth + 1)
         self.visualize_merge_sort(right_arr, right_elems, y_offset + 1, x_offset, depth + 1)
 
-        # Simulação da comparação i < j
+        # Comparing i < j
         left_sorted = sorted(left_arr)
         right_sorted = sorted(right_arr)
         merged_list = []
