@@ -48,7 +48,7 @@ class MergeSortScene(Scene):
         self.play(FadeIn(left_highlight), FadeIn(right_highlight))
         self.wait(0.2)
 
-        vertical_shift = 0
+        vertical_shift = 0.4
         horizontal_shift = 0.2 + x_offset
 
         self.play(
