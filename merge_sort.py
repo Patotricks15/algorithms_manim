@@ -3,11 +3,11 @@ from manim import *
 class MergeSortScene(Scene):
     def construct(self):
         arr = [3, 7, 6, -10, 15, 23.5, 55, -13]
-        print(f"Unsorted array: {arr}")
         elements = VGroup(*[self.create_box(str(x)) for x in arr])
         elements.arrange(RIGHT, buff=0.6)
         elements.move_to(ORIGIN)
         self.play(FadeIn(elements))
+        self.display_text(f"Unsorted array: {arr}", position=4)
         self.wait(1)
 
         self.visualize_merge_sort(arr, elements, y_offset=0, x_offset=0, depth=0)
@@ -21,17 +21,23 @@ class MergeSortScene(Scene):
         box = SurroundingRectangle(group, color=YELLOW, fill_opacity=0.2)
         return box
 
+    def display_text(self, content, position=0):
+        txt = Text(content, font_size=20).to_corner(UL).shift(DOWN * position)
+        self.play(FadeIn(txt))
+        self.wait(0.5)
+        self.play(FadeOut(txt))
+
     def visualize_merge_sort(self, arr, elements, y_offset, x_offset, depth):
         indent = '  ' * depth
-        print(f"{indent}mergeSort called on {arr}")
+        self.display_text(f"{indent}mergeSort called on {arr}", position=0)
 
         if len(arr) <= 1:
-            print(f"{indent}return (base case) {arr}")
+            self.display_text(f"{indent}return (base case) {arr}", position=0)
             return
 
         mid = len(arr) // 2
         left_arr, right_arr = arr[:mid], arr[mid:]
-        print(f"{indent}Split into {left_arr} and {right_arr}")
+        self.display_text(f"{indent}Split into {left_arr} and {right_arr}", position=0)
 
         left_elems = VGroup(*elements[:mid])
         right_elems = VGroup(*elements[mid:])
@@ -42,8 +48,8 @@ class MergeSortScene(Scene):
         self.play(FadeIn(left_highlight), FadeIn(right_highlight))
         self.wait(0.2)
 
-        vertical_shift = 0.6
-        horizontal_shift = 0.1 + x_offset
+        vertical_shift = 0
+        horizontal_shift = 0.2 + x_offset
 
         self.play(
             left_elems.animate.shift(UP * vertical_shift + LEFT * horizontal_shift),
@@ -54,7 +60,7 @@ class MergeSortScene(Scene):
         self.wait(0.2)
 
         self.visualize_merge_sort(left_arr, left_elems, y_offset + 1, x_offset, depth + 1)
-        self.visualize_merge_sort(right_arr, right_elems, y_offset + 1, x_offset , depth + 1)
+        self.visualize_merge_sort(right_arr, right_elems, y_offset + 1, x_offset, depth + 1)
 
         # Simulação da comparação i < j
         left_sorted = sorted(left_arr)
@@ -62,13 +68,14 @@ class MergeSortScene(Scene):
         merged_list = []
         i = j = 0
 
-        print(f"{indent}merge called on {left_sorted} and {right_sorted}")
+        self.display_text(f"{indent}merge called on {left_sorted} and {right_sorted}", position=1)
+
         while i < len(left_sorted) and j < len(right_sorted):
             i_val = left_sorted[i]
             j_val = right_sorted[j]
             i_box = self.create_box(str(i_val)).move_to(LEFT * 2 + DOWN * (y_offset + 1))
             j_box = self.create_box(str(j_val)).move_to(RIGHT * 2 + DOWN * (y_offset + 1))
-            compare_text = Text(f"Comparando {i_val} < {j_val}?", font_size=20).next_to(i_box, UP)
+            compare_text = Text(f"Comparing {i_val} < {j_val}", font_size=20).next_to(i_box, UP)
             self.play(FadeIn(i_box), FadeIn(j_box), FadeIn(compare_text))
             self.wait(0.5)
             if i_val < j_val:
@@ -80,14 +87,14 @@ class MergeSortScene(Scene):
             self.play(FadeOut(i_box), FadeOut(j_box), FadeOut(compare_text))
 
         if i < len(left_sorted):
-            print(f"{indent}Appending remaining from left: {left_sorted[i:]}")
+            self.display_text(f"{indent}Appending remaining from left: {left_sorted[i:]}", position=2)
             merged_list.extend(left_sorted[i:])
         if j < len(right_sorted):
-            print(f"{indent}Appending remaining from right: {right_sorted[j:]}")
+            self.display_text(f"{indent}Appending remaining from right: {right_sorted[j:]}", position=2)
             merged_list.extend(right_sorted[j:])
 
-        print(f"{indent}Result of merge: {merged_list}")
-        print(f"{indent}Merged {left_sorted} and {right_sorted} into {merged_list}")
+        self.display_text(f"{indent}Result of merge: {merged_list}", position=3)
+        self.display_text(f"{indent}Merged {left_sorted} and {right_sorted} into {merged_list}", position=4)
 
         merged = VGroup(*[self.create_box(str(x)) for x in merged_list])
         merged.arrange(RIGHT, buff=0.6)
